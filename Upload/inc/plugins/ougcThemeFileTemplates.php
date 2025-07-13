@@ -45,6 +45,9 @@ defined('IN_MYBB') || die('This file cannot be accessed directly.');
 define('ougc\ThemeFileTemplates\SETTINGS', [
     'importThemeFileName' => 'mybb_theme_1839.xml',
     'importOnInstallation' => false,
+    'extraSearchDirectories' => [
+        //MYBB_ROOT . 'inc/plugins/ougc/Awards/templates/',
+    ],
     // set this to any template set id, then visit the admin cp,
     // and edited templates will be updated to match the file system
     // stylesheets have to be imported manually for now
@@ -118,7 +121,17 @@ if ($templates instanceof templates) {
     $hookArguments = $plugins->run_hooks("ougc_theme_file_templates_get", $hookArguments);
 
     if (!file_exists($filePath)) {
-        return parent::get($title, $eslashes, $htmlcomments);
+        foreach(\ougc\ThemeFileTemplates\Core\getSetting("extraSearchDirectories") as $directory) {
+            $filePath = $directory . $title . ".html";
+            
+            if($fileExists = file_exists($filePath)) {
+                break;
+            }
+        }
+        
+        if(empty($fileExists)) {
+            return parent::get($title, $eslashes, $htmlcomments);
+        }
     }
 
     $template = file_get_contents($filePath) ?? "";
