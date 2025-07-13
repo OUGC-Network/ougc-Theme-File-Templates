@@ -43,7 +43,7 @@ defined('IN_MYBB') || die('This file cannot be accessed directly.');
 
 // You can uncomment the lines below to avoid storing some settings in the DB
 define('ougc\ThemeFileTemplates\SETTINGS', [
-    'importThemeFilePath' => 'install/resources/mybb_theme.xml',
+    'importThemeFileName' => 'mybb_theme_1839.xml',
     'importOnInstallation' => false,
     // set this to any template set id, then visit the admin cp,
     // and edited templates will be updated to match the file system

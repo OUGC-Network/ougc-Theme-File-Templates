@@ -101,8 +101,8 @@ function pluginInstallation(): void
 
     loadPluginLibrary();
 
-    if (file_exists(MYBB_ROOT . getSetting('importThemeFilePath'))) {
-        $contents = file_get_contents(MYBB_ROOT . getSetting('importThemeFilePath'));
+    if (file_exists(ROOT . '/themes/' . getSetting('importThemeFileName'))) {
+        $contents = file_get_contents(ROOT . '/themes/' . getSetting('importThemeFileName'));
 
         $parser = create_xml_parser($contents);
 
