@@ -107,12 +107,21 @@ if ($templates instanceof templates) {
         'function get($title, $eslashes = 1, $htmlcomments = 1)
 {
     $filePath = \ougc\ThemeFileTemplates\ROOT . "/templates/" . $title . ".html";
+    
+    global $plugins;
+    
+    $hookArguments = [
+        "title" => $title,
+        "filePath" => &$filePath
+    ];
+    
+    $hookArguments = $plugins->run_hooks("ougc_theme_file_templates_get", $hookArguments);
 
     if (!file_exists($filePath)) {
         return parent::get($title, $eslashes, $htmlcomments);
     }
 
-    $template = file_get_contents(\ougc\ThemeFileTemplates\ROOT . "/templates/" . $title . ".html") ?? "";
+    $template = file_get_contents($filePath) ?? "";
 
     $template = "<!-- start: " . $title . " -->\n{$template}\n<!-- end: " . $title . " -->";
 
