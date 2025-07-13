@@ -30,6 +30,7 @@
     - [Install](#install)
     - [Update](#update)
 - [Settings](#settings)
+- [Usage](#usage)
 - [Built Using](#built_using)
 - [Authors](#authors)
 - [Acknowledgments](#acknowledgement)
@@ -1093,6 +1094,25 @@ define('ougc\ThemeFileTemplates\SETTINGS', [
     'importToTemplateSetID' => 0,
 ]);
 ```
+
+[Go up to Table of Contents](#table_of_contents)
+
+## 📖 Usage <a name="usage"></a>
+
+After editing your templates, follow the next steps to apply your modifications and download a theme XML file from the
+AdminCP.
+
+1. Create a custom template set from the `Templates & Style -> Templates -> Add Set` and get the template set
+   identifier (sid)
+2. Update the `importToTemplateSetID` to match this template set identifier, example:
+    ```PHP
+    define('ougc\ThemeFileTemplates\SETTINGS', [
+        'importToTemplateSetID' => 9482,
+    ]);
+    ```
+3. Visiting any AdminCP page will automatically update the templates for this template set.
+4. Stylesheets have to be updated manually.
+5. Export your theme from the `Templates & Style -> Themes -> (select theme) -> Options -> Export Theme`
 
 [Go up to Table of Contents](#table_of_contents)
 
