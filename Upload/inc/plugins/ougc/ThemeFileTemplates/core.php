@@ -79,34 +79,6 @@ function addHooks(string $namespace): void
     }
 }
 
-function getTemplateName(string $templateName = ''): string
-{
-    $templatePrefix = '';
-
-    if ($templateName) {
-        $templatePrefix = '_';
-    }
-
-    return "{$templatePrefix}{$templateName}";
-}
-
-function getTemplate(string $templateName = '', bool $enableHTMLComments = true): string
-{
-    global $templates;
-
-    if (DEBUG) {
-        $filePath = ROOT . "/templates/{$templateName}.html";
-
-        $templateContents = file_get_contents($filePath);
-
-        $templates->cache[getTemplateName($templateName)] = $templateContents;
-    } elseif (my_strpos($templateName, '/') !== false) {
-        $templateName = substr($templateName, strpos($templateName, '/') + 1);
-    }
-
-    return $templates->render(getTemplateName($templateName), true, $enableHTMLComments);
-}
-
 function getSetting(string $settingKey = ''): array|string|float|int|bool
 {
     return SETTINGS[$settingKey] ?? false;

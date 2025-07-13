@@ -31,10 +31,11 @@ declare(strict_types=1);
 use function ougc\ThemeFileTemplates\Core\addHooks;
 use function ougc\ThemeFileTemplates\Core\control_db;
 use function ougc\ThemeFileTemplates\Core\control_object;
-use function ougc\ThemeFileTemplates\Admin\pluginActivation;
 use function ougc\ThemeFileTemplates\Admin\pluginInformation;
+use function ougc\ThemeFileTemplates\Admin\pluginActivation;
+use function ougc\ThemeFileTemplates\Admin\pluginInstallation;
 use function ougc\ThemeFileTemplates\Admin\pluginIsInstalled;
-use function ougc\ThemeFileTemplates\Admin\pluginUninstallion;
+use function ougc\ThemeFileTemplates\Admin\pluginUninstallation;
 
 use const ougc\ThemeFileTemplates\ROOT;
 
@@ -42,6 +43,8 @@ defined('IN_MYBB') || die('This file cannot be accessed directly.');
 
 // You can uncomment the lines below to avoid storing some settings in the DB
 define('ougc\ThemeFileTemplates\SETTINGS', [
+    'importThemeFilePath' => 'install/resources/mybb_theme.xml',
+    'importOnInstallation' => false,
     // set this to any template set id, then visit the admin cp,
     // and edited templates will be updated to match the file system
     // stylesheets have to be imported manually for now
@@ -81,6 +84,11 @@ function ougcThemeFileTemplates_activate(): void
     pluginActivation();
 }
 
+function ougcThemeFileTemplates_install(): void
+{
+    pluginInstallation();
+}
+
 function ougcThemeFileTemplates_is_installed(): bool
 {
     return pluginIsInstalled();
@@ -88,7 +96,7 @@ function ougcThemeFileTemplates_is_installed(): bool
 
 function ougcThemeFileTemplates_uninstall(): void
 {
-    pluginUninstallion();
+    pluginUninstallation();
 }
 
 global $templates;

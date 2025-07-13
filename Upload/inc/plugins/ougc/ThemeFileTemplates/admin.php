@@ -30,10 +30,10 @@ declare(strict_types=1);
 
 namespace ougc\ThemeFileTemplates\Admin;
 
-use DirectoryIterator;
 use PluginLibrary;
 use stdClass;
 
+use function ougc\ThemeFileTemplates\Core\getSetting;
 use function ougc\ThemeFileTemplates\Core\languageLoad;
 
 use const ougc\ThemeFileTemplates\ROOT;
@@ -64,7 +64,7 @@ function pluginInformation(): array
 
 function pluginActivation(): bool
 {
-    global $PL, $cache;
+    global $cache;
 
     languageLoad();
 
@@ -72,10 +72,37 @@ function pluginActivation(): bool
 
     loadPluginLibrary();
 
-    /*
+    $plugins = $cache->read('ougc_plugins');
 
-    if (file_exists(MYBB_ROOT . "install/resources/mybb_theme.xml")) {
-        $contents = file_get_contents(MYBB_ROOT . 'install/resources/mybb_theme.xml');
+    if (!$plugins) {
+        $plugins = [];
+    }
+
+    if (!isset($plugins['ThemeFileTemplates'])) {
+        $plugins['ThemeFileTemplates'] = $pluginInfo['versioncode'];
+    }
+
+    /*~*~* RUN UPDATES START *~*~*/
+
+    /*~*~* RUN UPDATES END *~*~*/
+
+    $plugins['ThemeFileTemplates'] = $pluginInfo['versioncode'];
+
+    $cache->update('ougc_plugins', $plugins);
+
+    return true;
+}
+
+function pluginInstallation(): void
+{
+    if (!getSetting('importOnInstallation')) {
+        return;
+    }
+
+    loadPluginLibrary();
+
+    if (file_exists(MYBB_ROOT . getSetting('importThemeFilePath'))) {
+        $contents = file_get_contents(MYBB_ROOT . getSetting('importThemeFilePath'));
 
         $parser = create_xml_parser($contents);
 
@@ -92,7 +119,7 @@ function pluginActivation(): bool
 
         if (is_array($templates)) {
             // Theme only has one custom template
-            if (array_key_exists("attributes", $templates)) {
+            if (array_key_exists('attributes', $templates)) {
                 $templates = array($templates);
             }
         }
@@ -129,7 +156,7 @@ function pluginActivation(): bool
         foreach ($theme['stylesheets']['stylesheet'] as $stylesheet) {
             $stylesheet['attributes']['name'] = my_substr($stylesheet['attributes']['name'], 0, 30);
 
-            if (substr($stylesheet['attributes']['name'], -4) === ".css") {
+            if (str_ends_with($stylesheet['attributes']['name'], '.css')) {
                 file_put_contents(
                     ROOT . '/stylesheets/' . $stylesheet['attributes']['name'],
                     $stylesheet['value']
@@ -137,28 +164,6 @@ function pluginActivation(): bool
             }
         }
     }
-
-    */
-
-    $plugins = $cache->read('ougc_plugins');
-
-    if (!$plugins) {
-        $plugins = [];
-    }
-
-    if (!isset($plugins['ThemeFileTemplates'])) {
-        $plugins['ThemeFileTemplates'] = $pluginInfo['versioncode'];
-    }
-
-    /*~*~* RUN UPDATES START *~*~*/
-
-    /*~*~* RUN UPDATES END *~*~*/
-
-    $plugins['ThemeFileTemplates'] = $pluginInfo['versioncode'];
-
-    $cache->update('ougc_plugins', $plugins);
-
-    return true;
 }
 
 function pluginIsInstalled(): bool
@@ -171,7 +176,7 @@ function pluginIsInstalled(): bool
     return isset($plugins['ThemeFileTemplates']);
 }
 
-function pluginUninstallion(): bool
+function pluginUninstallation(): void
 {
     global $cache;
 
@@ -187,8 +192,6 @@ function pluginUninstallion(): bool
     } else {
         $cache->delete('ougc_plugins');
     }
-
-    return true;
 }
 
 function pluginLibraryRequirements(): stdClass
@@ -196,7 +199,7 @@ function pluginLibraryRequirements(): stdClass
     return (object)pluginInformation()['pl'];
 }
 
-function loadPluginLibrary(): bool
+function loadPluginLibrary(): void
 {
     global $PL, $lang;
 
@@ -220,6 +223,4 @@ function loadPluginLibrary(): bool
 
         admin_redirect('index.php?module=config-plugins');
     }
-
-    return true;
 }
