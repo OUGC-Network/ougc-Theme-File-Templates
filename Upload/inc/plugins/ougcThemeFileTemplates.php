@@ -28,12 +28,13 @@
 
 declare(strict_types=1);
 
+use function ougc\ThemeFileTemplates\Core\addHooks;
+use function ougc\ThemeFileTemplates\Core\control_db;
+use function ougc\ThemeFileTemplates\Core\control_object;
 use function ougc\ThemeFileTemplates\Admin\pluginActivation;
 use function ougc\ThemeFileTemplates\Admin\pluginInformation;
 use function ougc\ThemeFileTemplates\Admin\pluginIsInstalled;
 use function ougc\ThemeFileTemplates\Admin\pluginUninstallion;
-
-use function ougc\ThemeFileTemplates\Core\addHooks;
 
 use const ougc\ThemeFileTemplates\ROOT;
 
@@ -41,7 +42,10 @@ defined('IN_MYBB') || die('This file cannot be accessed directly.');
 
 // You can uncomment the lines below to avoid storing some settings in the DB
 define('ougc\ThemeFileTemplates\SETTINGS', [
-    //'key' => '',
+    // set this to any template set id, then visit the admin cp,
+    // and edited templates will be updated to match the file system
+    // stylesheets have to be imported manually for now
+    'importToTemplateSetID' => 0,
 ]);
 
 define('ougc\ThemeFileTemplates\DEBUG', true);
@@ -54,6 +58,13 @@ defined('PLUGINLIBRARY') || define('PLUGINLIBRARY', MYBB_ROOT . 'inc/plugins/plu
 
 if (defined('IN_ADMINCP')) {
     require_once ROOT . '/admin.php';
+    require_once ROOT . '/hooks/admin.php';
+
+    addHooks('ougc\ThemeFileTemplates\Hooks\Admin');
+} else {
+    require_once ROOT . '/hooks/forum.php';
+
+    addHooks('ougc\ThemeFileTemplates\Hooks\Forum');
 }
 
 require_once ROOT . '/hooks/shared.php';
@@ -82,8 +93,8 @@ function ougcThemeFileTemplates_uninstall(): void
 
 global $templates;
 
-if ($templates instanceof \templates) {
-    \ougc\ThemeFileTemplates\Core\control_object(
+if ($templates instanceof templates) {
+    control_object(
         $templates,
         'function get($title, $eslashes = 1, $htmlcomments = 1)
 {
@@ -105,3 +116,14 @@ if ($templates instanceof \templates) {
 }'
     );
 }
+
+control_db(
+    'function query($string, $hide_errors=0, $write_query=0)
+{
+    if(str_contains($string, "SELECT stylesheet FROM")) {
+        $string = str_replace("SELECT stylesheet", "SELECT name, stylesheet", $string);
+    }
+    
+    return parent::query($string, $hide_errors, $write_query);
+}'
+);

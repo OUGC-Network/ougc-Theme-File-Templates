@@ -29,3 +29,16 @@
 declare(strict_types=1);
 
 namespace ougc\ThemeFileTemplates\Hooks\Shared;
+
+use const ougc\ThemeFileTemplates\ROOT;
+
+function css_start(string &$stylesheet): void
+{
+    global $row;
+
+    $filePath = ROOT . '/stylesheets/' . $row['name'];
+
+    if (file_exists($filePath)) {
+        $stylesheet = file_get_contents($filePath) ?? '';
+    }
+}

@@ -50,8 +50,8 @@ function pluginInformation(): array
         'website' => 'https://ougc.network',
         'author' => 'Omar G.',
         'authorsite' => 'https://ougc.network',
-        'version' => '1.0.0',
-        'versioncode' => 1000,
+        'version' => '1.8.39',
+        'versioncode' => 1839,
         'compatibility' => '18*',
         'codename' => 'ougcThemeFileTemplates',
         'newpoints' => '3.1.0',
@@ -64,11 +64,81 @@ function pluginInformation(): array
 
 function pluginActivation(): bool
 {
-    global $cache;
+    global $PL, $cache;
+
+    languageLoad();
 
     $pluginInfo = pluginInformation();
 
     loadPluginLibrary();
+
+    /*
+
+    if (file_exists(MYBB_ROOT . "install/resources/mybb_theme.xml")) {
+        $contents = file_get_contents(MYBB_ROOT . 'install/resources/mybb_theme.xml');
+
+        $parser = create_xml_parser($contents);
+
+        $tree = $parser->get_tree();
+
+        if (is_array($tree) && is_array($tree['theme'])) {
+            $theme = $tree['theme'];
+        }
+    }
+
+    // Do we have any templates to insert?
+    if (!empty($theme['templates']['template']) && empty($options['no_templates'])) {
+        $templates = $theme['templates']['template'];
+
+        if (is_array($templates)) {
+            // Theme only has one custom template
+            if (array_key_exists("attributes", $templates)) {
+                $templates = array($templates);
+            }
+        }
+
+        // Security check
+        $security_check = false;
+
+        foreach ($templates as $template) {
+            if (check_template($template['value'])) {
+                $security_check = true;
+
+                break;
+            }
+        }
+
+        if (!$security_check) {
+            foreach ($templates as $template) {
+                file_put_contents(
+                    ROOT . '/templates/' . $template['attributes']['name'] . '.html',
+                    $template['value']
+                );
+            }
+        }
+    }
+
+    // If we have any stylesheets, process them
+    if (!empty($theme['stylesheets']['stylesheet']) && empty($options['no_stylesheets'])) {
+        // Are we dealing with a single stylesheet?
+        if (isset($theme['stylesheets']['stylesheet']['tag'])) {
+            // Trick the system into thinking we have a good array =P
+            $theme['stylesheets']['stylesheet'] = array($theme['stylesheets']['stylesheet']);
+        }
+
+        foreach ($theme['stylesheets']['stylesheet'] as $stylesheet) {
+            $stylesheet['attributes']['name'] = my_substr($stylesheet['attributes']['name'], 0, 30);
+
+            if (substr($stylesheet['attributes']['name'], -4) === ".css") {
+                file_put_contents(
+                    ROOT . '/stylesheets/' . $stylesheet['attributes']['name'],
+                    $stylesheet['value']
+                );
+            }
+        }
+    }
+
+    */
 
     $plugins = $cache->read('ougc_plugins');
 
@@ -95,6 +165,7 @@ function pluginIsInstalled(): bool
 {
     global $cache;
 
+    // Delete version from cache
     $plugins = (array)$cache->read('ougc_plugins');
 
     return isset($plugins['ThemeFileTemplates']);
