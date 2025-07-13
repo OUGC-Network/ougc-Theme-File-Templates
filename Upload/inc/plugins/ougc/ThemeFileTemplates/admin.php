@@ -50,11 +50,10 @@ function pluginInformation(): array
         'website' => 'https://ougc.network',
         'author' => 'Omar G.',
         'authorsite' => 'https://ougc.network',
-        'version' => '1.8.39',
-        'versioncode' => 1839,
+        'version' => '1.0.0',
+        'versioncode' => 1000,
         'compatibility' => '18*',
         'codename' => 'ougcThemeFileTemplates',
-        'newpoints' => '3.1.0',
         'pl' => [
             'version' => 13,
             'url' => 'https://community.mybb.com/mods.php?action=view&pid=573'
